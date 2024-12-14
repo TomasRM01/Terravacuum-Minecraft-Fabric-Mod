@@ -33,7 +33,11 @@ public class TerravacuumItem extends Item{
                     for (int z = -radius; z <= radius; z++) {
                         targetPos = playerPos.add(x, y, z);
                         if (user.getRotationVec(1.0F).dotProduct(targetPos.subtract(playerPos).toCenterPos().normalize()) > 0.5) {
-                            world.breakBlock(targetPos, true, user);
+                            // If the block is not breakable, dont break it
+                            float blockHardness = world.getBlockState(targetPos).getBlock().getHardness();
+                            if (blockHardness >= 0 && blockHardness <= 1.5) {
+                                world.breakBlock(targetPos, true, user);
+                            }
                         }
                     }
                 }
