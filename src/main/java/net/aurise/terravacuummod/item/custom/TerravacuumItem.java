@@ -1,13 +1,18 @@
 package net.aurise.terravacuummod.item.custom;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -52,5 +57,28 @@ public class TerravacuumItem extends Item{
 
         return ActionResult.SUCCESS;
     }
+
+    // Attach shulker box to the item and detach it like a bundle
+    @Override
+    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+
+        // Attach shulker box to the item
+        if (clickType == ClickType.LEFT && otherStack.getItem() == net.minecraft.item.Items.SHULKER_BOX && stack.getComponents().get(DataComponentTypes.CONTAINER) == null) {
+            stack.set(DataComponentTypes.CONTAINER, otherStack.getComponents().get(DataComponentTypes.CONTAINER));
+            otherStack.setCount(0);
+            return true;
+        }
+
+        // Detach shulker box from the item
+        if (clickType == ClickType.RIGHT && otherStack.getItem() == net.minecraft.item.Items.AIR && stack.getComponents().get(DataComponentTypes.CONTAINER) != null) {
+            ItemStack shulker = net.minecraft.item.Items.SHULKER_BOX.getDefaultStack();
+            shulker.set(DataComponentTypes.CONTAINER, stack.getComponents().get(DataComponentTypes.CONTAINER));
+            stack.remove(DataComponentTypes.CONTAINER);
+            cursorStackReference.set(shulker);
+            return true;
+        }
+
+        return false;
+	}
 
 }
