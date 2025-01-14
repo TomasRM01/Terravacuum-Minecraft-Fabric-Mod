@@ -2,7 +2,7 @@ package net.aurise.terravacuummod.item.custom;
 
 import java.util.List;
 
-import net.minecraft.component.DataComponentTypes;
+import net.aurise.terravacuummod.component.ModDataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
@@ -66,17 +66,16 @@ public class TerravacuumItem extends Item{
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
 
         // Attach shulker box to the item
-        if (clickType == ClickType.LEFT && isShulkerBox(otherStack.getItem()) && stack.getComponents().get(DataComponentTypes.CONTAINER) == null) {
-            stack.set(DataComponentTypes.CONTAINER, otherStack.getComponents().get(DataComponentTypes.CONTAINER));
-            otherStack.setCount(0);
+        if (clickType == ClickType.LEFT && isShulkerBox(cursorStackReference.get().getItem()) && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) == null) {
+            stack.set(ModDataComponentTypes.ATTACHED_SHULKER, cursorStackReference.get());
+            cursorStackReference.set(ItemStack.EMPTY);
             return true;
         }
 
         // Detach shulker box from the item
-        if (clickType == ClickType.RIGHT && otherStack.getItem() == Items.AIR && stack.getComponents().get(DataComponentTypes.CONTAINER) != null) {
-            ItemStack shulker = Items.SHULKER_BOX.getDefaultStack();
-            shulker.set(DataComponentTypes.CONTAINER, stack.getComponents().get(DataComponentTypes.CONTAINER));
-            stack.remove(DataComponentTypes.CONTAINER);
+        if (clickType == ClickType.RIGHT && otherStack.getItem() == Items.AIR && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
+            ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+            stack.remove(ModDataComponentTypes.ATTACHED_SHULKER);
             cursorStackReference.set(shulker);
             return true;
         }

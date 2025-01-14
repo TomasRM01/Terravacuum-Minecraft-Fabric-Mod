@@ -1,5 +1,6 @@
 package net.aurise.terravacuummod;
 
+import net.aurise.terravacuummod.component.ModDataComponentTypes;
 import net.aurise.terravacuummod.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 
@@ -23,5 +24,7 @@ public class TerravacuumMod implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 
 		ModItems.registerModItems();
+
+		ModDataComponentTypes.registerDataComponentTypes();
 	}
 }
