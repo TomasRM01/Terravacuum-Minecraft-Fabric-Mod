@@ -3,9 +3,14 @@ package net.aurise.terravacuummod.item.custom;
 import java.util.List;
 
 import net.aurise.terravacuummod.component.ModDataComponentTypes;
+import net.minecraft.block.Block;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
@@ -17,12 +22,22 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TerravacuumItem extends Item{
+
+public class TerravacuumItem extends BundleItem {
+
+    final int shulkerBoxInventorySize = ShulkerBoxBlockEntity.INVENTORY_SIZE;
+    
     public TerravacuumItem(Settings settings) {
         super(settings);
+    }
+
+    @Override
+    public boolean canBeNested() {
+        return false;
     }
 
     @Override
@@ -36,15 +51,19 @@ public class TerravacuumItem extends Item{
             
             BlockPos playerPos = user.getBlockPos();
             BlockPos targetPos;
+
+            ItemStack attachedShulker = user.getStackInHand(hand).get(ModDataComponentTypes.ATTACHED_SHULKER);
+
             for (int y = 0; y <= height; y++) {
                 for (int x = -radius; x <= radius; x++) {
                     for (int z = -radius; z <= radius; z++) {
                         targetPos = playerPos.add(x, y, z);
                         if (user.getRotationVec(1.0F).dotProduct(targetPos.subtract(playerPos).toCenterPos().normalize()) > 0.5) {
                             // If the block is not breakable, dont break it
-                            float blockHardness = world.getBlockState(targetPos).getBlock().getHardness();
-                            if (blockHardness >= 0 && blockHardness <= 1.5) {
-                                world.breakBlock(targetPos, true, user);
+                            Block block = world.getBlockState(targetPos).getBlock();
+                            float blockHardness = block.getHardness();
+                            if (blockHardness >= 0 && blockHardness <= 1.5 && !world.getBlockState(targetPos).isAir()) {
+                                handleBlockDestruction(world, user, targetPos, block, attachedShulker, user.getStackInHand(hand));
                             }
                         }
                     }
@@ -59,6 +78,40 @@ public class TerravacuumItem extends Item{
         };
 
         return ActionResult.SUCCESS;
+    }
+
+    // Break the block and add it to the shulker box if it is not full, otherwise drop it
+    private void handleBlockDestruction(World world, PlayerEntity user, BlockPos targetPos, Block block, ItemStack shulker, ItemStack stack) {
+
+        boolean added = false;
+
+        if (shulker != null) {
+
+            DefaultedList<ItemStack> stacks = DefaultedList.ofSize(shulkerBoxInventorySize, ItemStack.EMPTY);
+            shulker.get(DataComponentTypes.CONTAINER).copyTo(stacks);
+            
+            for (int i = 0; i < stacks.size(); i++) {
+                if (stacks.get(i).isEmpty()) {
+                    stacks.set(i, new ItemStack(block));
+                    added = true;
+                    break;
+                }
+                else if (stacks.get(i).isOf(block.asItem())) {
+                    int count = stacks.get(i).getCount();
+                    if (count < 64) {
+                        stacks.get(i).setCount(count + 1);
+                        added = true;
+                        break;
+                    }
+                }
+            }
+
+            shulker.set(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(stacks));
+            stack.set(ModDataComponentTypes.ATTACHED_SHULKER, shulker);
+
+        }
+
+        world.breakBlock(targetPos, !added, user);
     }
 
     // Attach shulker box to the item and detach it like a bundle
