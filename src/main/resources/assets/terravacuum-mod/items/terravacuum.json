@@ -1,6 +1,19 @@
 {
     "model": {
-        "type" : "minecraft:model",
-        "model": "terravacuum-mod:item/terravacuum"
+        "type" : "minecraft:select",
+        "cases": [
+            {
+                "model": {
+                    "type": "minecraft:model",
+                    "model": "terravacuum-mod:item/terravacuum_2d"
+                },
+                "when": "gui"
+            }
+        ],
+        "fallback": {
+            "type": "minecraft:model",
+            "model": "terravacuum-mod:item/terravacuum"
+        },
+        "property": "minecraft:display_context"
     }
 }
