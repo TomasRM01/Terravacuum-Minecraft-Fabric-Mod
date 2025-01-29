@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
@@ -120,6 +121,9 @@ public class TerravacuumItem extends BundleItem {
 
         // Attach shulker box to the item
         if (clickType == ClickType.LEFT && isShulkerBox(cursorStackReference.get().getItem()) && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) == null) {
+            CustomModelDataComponent customModelData = new CustomModelDataComponent(List.of(), List.of(), List.of(cursorStackReference.get().getItem().toString()), List.of()); // Temporal fix until 1.21.5
+            stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, customModelData); // Temporal fix until 1.21.5
+            // stack.set(ModDataComponentTypes.SHULKER_COLOR, cursorStackReference.get().getItem().toString()); // This is not working until 1.21.5
             stack.set(ModDataComponentTypes.ATTACHED_SHULKER, cursorStackReference.get());
             cursorStackReference.set(ItemStack.EMPTY);
             return true;
@@ -127,6 +131,8 @@ public class TerravacuumItem extends BundleItem {
 
         // Detach shulker box from the item
         if (clickType == ClickType.RIGHT && otherStack.getItem() == Items.AIR && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
+            stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Temporal fix until 1.21.5
+            // stack.remove(ModDataComponentTypes.SHULKER_COLOR); // This is not working until 1.21.5
             ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
             stack.remove(ModDataComponentTypes.ATTACHED_SHULKER);
             cursorStackReference.set(shulker);

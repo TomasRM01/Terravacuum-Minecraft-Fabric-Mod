@@ -1,37 +1,370 @@
 {
     "model": {
-        "type" : "minecraft:select",
-        "cases": [
-            {
-                "model": {
-                    "type" : "minecraft:condition",
-                    "property": "minecraft:has_component",
-                    "component": "terravacuum-mod:attached_shulker",
-                        "on_true": {
-                            "type": "minecraft:model",
-                            "model": "terravacuum-mod:item/terravacuum_2d"
-                        },
-                        "on_false": {
+        "type" : "minecraft:condition",
+        "property": "minecraft:has_component",
+        "component": "terravacuum-mod:attached_shulker",
+            "on_true": {
+                "type": "minecraft:select",
+                "property": "minecraft:custom_model_data",
+                "cases": [
+                    {
+                        "when": "minecraft:shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:white_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_white_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_white"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:orange_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_orange_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_orange"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:magenta_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_magenta_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_magenta"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:light_blue_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_light_blue_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_light_blue"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:yellow_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_yellow_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_yellow"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:lime_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_lime_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_lime"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:pink_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_pink_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_pink"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:gray_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_gray_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_gray"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:light_gray_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_light_gray_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_light_gray"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:cyan_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_cyan_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_cyan"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:purple_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_purple_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_purple"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:blue_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_blue_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_blue"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:brown_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_brown_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_brown"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:green_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_green_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_green"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:red_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_red_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_red"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    },
+                    {
+                        "when": "minecraft:black_shulker_box",
+                        "model": {
+                            "type" : "minecraft:select",
+                            "cases" : [
+                                {
+                                    "model": {
+                                        "type": "minecraft:model",
+                                        "model": "terravacuum-mod:item/terravacuum_black_2d"
+                                    },
+                                    "when": ["gui", "fixed"]
+                                }
+                            ],
+                            "fallback": {
+                                "type": "minecraft:model",
+                                "model": "terravacuum-mod:item/terravacuum_black"
+                            },
+                            "property": "minecraft:display_context"
+                        }
+                    }
+                ]
+            },
+            "on_false": {
+                "type" : "minecraft:select",
+                "cases" : [
+                    {
+                        "model": {
                             "type": "minecraft:model",
                             "model": "terravacuum-mod:item/terravacuum_empty_2d"
-                        }
-                },
-                "when": "gui"
-            }
-        ],
-        "fallback": {
-            "type": "minecraft:condition",
-            "property": "minecraft:has_component",
-            "component": "terravacuum-mod:attached_shulker",
-                "on_true": {
-                    "type": "minecraft:model",
-                    "model": "terravacuum-mod:item/terravacuum"
-                },
-                "on_false": {
+                        },
+                        "when": ["gui", "fixed"]
+                    }
+                ],
+                "fallback": {
                     "type": "minecraft:model",
                     "model": "terravacuum-mod:item/terravacuum_empty"
-                }
-        },
-        "property": "minecraft:display_context"
+                },
+                "property": "minecraft:display_context"
+            }
     }
 }
