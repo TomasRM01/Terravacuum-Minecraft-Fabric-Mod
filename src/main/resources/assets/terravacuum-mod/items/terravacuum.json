@@ -4,15 +4,33 @@
         "cases": [
             {
                 "model": {
-                    "type": "minecraft:model",
-                    "model": "terravacuum-mod:item/terravacuum_2d"
+                    "type" : "minecraft:condition",
+                    "property": "minecraft:has_component",
+                    "component": "terravacuum-mod:attached_shulker",
+                        "on_true": {
+                            "type": "minecraft:model",
+                            "model": "terravacuum-mod:item/terravacuum_2d"
+                        },
+                        "on_false": {
+                            "type": "minecraft:model",
+                            "model": "terravacuum-mod:item/terravacuum_empty_2d"
+                        }
                 },
                 "when": "gui"
             }
         ],
         "fallback": {
-            "type": "minecraft:model",
-            "model": "terravacuum-mod:item/terravacuum"
+            "type": "minecraft:condition",
+            "property": "minecraft:has_component",
+            "component": "terravacuum-mod:attached_shulker",
+                "on_true": {
+                    "type": "minecraft:model",
+                    "model": "terravacuum-mod:item/terravacuum"
+                },
+                "on_false": {
+                    "type": "minecraft:model",
+                    "model": "terravacuum-mod:item/terravacuum_empty"
+                }
         },
         "property": "minecraft:display_context"
     }
