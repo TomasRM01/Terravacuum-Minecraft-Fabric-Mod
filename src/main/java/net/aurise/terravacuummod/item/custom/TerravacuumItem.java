@@ -67,6 +67,11 @@ public class TerravacuumItem extends Item {
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
 
         if(!world.isClient()){
+
+            // if the item durability is 1, do nothing
+            if (user.getStackInHand(hand).getDamage() == user.getStackInHand(hand).getMaxDamage() - 1) {
+                return ActionResult.FAIL;
+            }
             
             // Break blocks in a cone in front of the player
             int radius = 5;

@@ -15,7 +15,7 @@ import net.minecraft.item.Items;
 
 public class ModItems {
 
-    public static final Item TERRAVACUUM = registerItem("terravacuum", new TerravacuumItem(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TerravacuumMod.MOD_ID,"terravacuum"))).maxDamage(100).repairable(Items.BREEZE_ROD)));
+    public static final Item TERRAVACUUM = registerItem("terravacuum", new TerravacuumItem(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TerravacuumMod.MOD_ID,"terravacuum"))).maxDamage(101).repairable(Items.BREEZE_ROD)));
     
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, Identifier.of(TerravacuumMod.MOD_ID, name), item);
