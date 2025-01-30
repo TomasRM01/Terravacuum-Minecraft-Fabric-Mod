@@ -3,17 +3,20 @@ package net.aurise.terravacuummod.item.custom;
 import java.util.List;
 
 import net.aurise.terravacuummod.component.ModDataComponentTypes;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.CustomModelDataComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -38,6 +41,17 @@ public class TerravacuumItem extends BundleItem {
 
     @Override
     public boolean canBeNested() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeEnchantedWith(ItemStack stack, RegistryEntry<Enchantment> enchantment, EnchantingContext context) {
+
+        // Only unbreaking enchantment is allowed
+        if (enchantment.matchesKey(net.minecraft.enchantment.Enchantments.UNBREAKING)) {
+            return true;
+        }
+
         return false;
     }
 
