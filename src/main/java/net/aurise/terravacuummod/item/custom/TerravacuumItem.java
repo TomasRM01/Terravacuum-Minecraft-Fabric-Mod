@@ -31,7 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 
-public class TerravacuumItem extends BundleItem {
+public class TerravacuumItem extends Item {
 
     final int shulkerBoxInventorySize = ShulkerBoxBlockEntity.INVENTORY_SIZE;
     
