@@ -56,6 +56,15 @@ public class TerravacuumItem extends BundleItem {
     }
 
     @Override
+    public ItemStack getRecipeRemainder(ItemStack stack) {
+        if (stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null)
+        {
+            return stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
 
         if(!world.isClient()){
