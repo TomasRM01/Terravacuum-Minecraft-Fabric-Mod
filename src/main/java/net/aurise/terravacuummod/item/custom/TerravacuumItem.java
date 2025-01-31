@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.enchantment.Enchantment;
@@ -144,49 +143,36 @@ public class TerravacuumItem extends Item {
         world.breakBlock(targetPos, !added, user);
     }
 
-    // Attach shulker box to the item and detach it like a bundle
+    // Called when clicked the item
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+        return handleShulkerInteraction(stack, otherStack, null, clickType, player, cursorStackReference);
+    }
 
+    // Called when clicked WITH the item on the cursor
+    @Override
+    public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
+        return handleShulkerInteraction(stack, slot.getStack(), slot, clickType, player, null);
+    }
+
+    // Attach and detach shulker boxes to the item like a bundle
+    private boolean handleShulkerInteraction(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
         ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
 
         // Attach shulker box to the item
-        if (clickType == ClickType.LEFT && isShulkerBox(cursorStackReference.get().getItem())) {
-            if (shulker == null){
-                addShulkerToTerravacuum(player, stack, null, cursorStackReference, cursorStackReference.get());
+        if (clickType == ClickType.LEFT && isShulkerBox(otherStack.getItem())) {
+            if (shulker == null) {
+                addShulkerToTerravacuum(player, stack, slot, cursorStackReference, otherStack);
                 return true;
             }
             player.playSound(SoundEvents.ITEM_BUNDLE_INSERT_FAIL, 1.0F, 1.0F);
         }
         // Detach shulker box from the item
         else if (clickType == ClickType.RIGHT && otherStack.isEmpty() && shulker != null) {
-            removeShulkerFromTerravacuum(player, stack, null, cursorStackReference, shulker);
+            removeShulkerFromTerravacuum(player, stack, slot, cursorStackReference, shulker);
             return true;
         }
 
-        return false;
-	}
-
-    // Attach shulker box to the item and detach it like a bundle
-    @Override
-    public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
-
-        ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
-
-        // Attach shulker box to the item
-        if (clickType == ClickType.LEFT && !slot.getStack().isEmpty() && isShulkerBox(slot.getStack().getItem())) {
-            if (shulker == null) {
-                addShulkerToTerravacuum(player, stack, slot, null, slot.getStack());
-                return true;
-            }
-            player.playSound(SoundEvents.ITEM_BUNDLE_INSERT_FAIL, 1.0F, 1.0F);
-        } 
-        // Detach shulker box from the item
-        else if (clickType == ClickType.RIGHT && slot.getStack().isEmpty() && shulker != null) {
-            removeShulkerFromTerravacuum(player, stack, slot, null, shulker);
-            return true;
-        }
-        
         return false;
     }
 
@@ -201,7 +187,6 @@ public class TerravacuumItem extends Item {
         if (cursorStackReference != null) cursorStackReference.set(ItemStack.EMPTY);
         if (slot != null) slot.setStack(ItemStack.EMPTY);
 
-        // Update the player inventory
         this.onContentChanged(player);
     }
 
@@ -215,7 +200,6 @@ public class TerravacuumItem extends Item {
         if (cursorStackReference != null) cursorStackReference.set(shulker);
         if (slot != null) slot.insertStack(shulker);
 
-        // Update the player inventory
         this.onContentChanged(player);
     }
 
@@ -228,6 +212,7 @@ public class TerravacuumItem extends Item {
         return false;
     }
 
+    // Update the player inventory
     private void onContentChanged(PlayerEntity user) {
         ScreenHandler screenHandler = user.currentScreenHandler;
         if (screenHandler != null) {
