@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.enchantment.Enchantment;
@@ -17,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -146,28 +148,76 @@ public class TerravacuumItem extends Item {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
 
-        // Attach shulker box to the item
-        if (clickType == ClickType.LEFT && isShulkerBox(cursorStackReference.get().getItem()) && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) == null) {
-            CustomModelDataComponent customModelData = new CustomModelDataComponent(List.of(), List.of(), List.of(cursorStackReference.get().getItem().toString()), List.of()); // Temporal fix until 1.21.5
-            stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, customModelData); // Temporal fix until 1.21.5
-            // stack.set(ModDataComponentTypes.SHULKER_COLOR, cursorStackReference.get().getItem().toString()); // This is not working until 1.21.5
-            stack.set(ModDataComponentTypes.ATTACHED_SHULKER, cursorStackReference.get());
-            cursorStackReference.set(ItemStack.EMPTY);
-            return true;
-        }
+        ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
 
+        // Attach shulker box to the item
+        if (clickType == ClickType.LEFT && isShulkerBox(cursorStackReference.get().getItem())) {
+            if (shulker == null){
+                addShulkerToTerravacuum(player, stack, null, cursorStackReference, cursorStackReference.get());
+                return true;
+            }
+            player.playSound(SoundEvents.ITEM_BUNDLE_INSERT_FAIL, 1.0F, 1.0F);
+        }
         // Detach shulker box from the item
-        if (clickType == ClickType.RIGHT && otherStack.getItem() == Items.AIR && stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
-            stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Temporal fix until 1.21.5
-            // stack.remove(ModDataComponentTypes.SHULKER_COLOR); // This is not working until 1.21.5
-            ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
-            stack.remove(ModDataComponentTypes.ATTACHED_SHULKER);
-            cursorStackReference.set(shulker);
+        else if (clickType == ClickType.RIGHT && otherStack.isEmpty() && shulker != null) {
+            removeShulkerFromTerravacuum(player, stack, null, cursorStackReference, shulker);
             return true;
         }
 
         return false;
 	}
+
+    // Attach shulker box to the item and detach it like a bundle
+    @Override
+    public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
+
+        ItemStack shulker = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+
+        // Attach shulker box to the item
+        if (clickType == ClickType.LEFT && !slot.getStack().isEmpty() && isShulkerBox(slot.getStack().getItem())) {
+            if (shulker == null) {
+                addShulkerToTerravacuum(player, stack, slot, null, slot.getStack());
+                return true;
+            }
+            player.playSound(SoundEvents.ITEM_BUNDLE_INSERT_FAIL, 1.0F, 1.0F);
+        } 
+        // Detach shulker box from the item
+        else if (clickType == ClickType.RIGHT && slot.getStack().isEmpty() && shulker != null) {
+            removeShulkerFromTerravacuum(player, stack, slot, null, shulker);
+            return true;
+        }
+        
+        return false;
+    }
+
+    private void addShulkerToTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
+        player.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
+
+        CustomModelDataComponent customModelData = new CustomModelDataComponent(List.of(), List.of(), List.of(shulker.getItem().toString()), List.of()); // Temporal fix until 1.21.5
+        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, customModelData); // Temporal fix until 1.21.5
+        // stack.set(ModDataComponentTypes.SHULKER_COLOR, shulker.getItem().toString()); // This is not working until 1.21.5
+
+        stack.set(ModDataComponentTypes.ATTACHED_SHULKER, shulker);
+        if (cursorStackReference != null) cursorStackReference.set(ItemStack.EMPTY);
+        if (slot != null) slot.setStack(ItemStack.EMPTY);
+
+        // Update the player inventory
+        this.onContentChanged(player);
+    }
+
+    private void removeShulkerFromTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
+        player.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
+
+        stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Temporal fix until 1.21.5
+        // stack.remove(ModDataComponentTypes.SHULKER_COLOR); // This is not working until 1.21.5
+
+        stack.remove(ModDataComponentTypes.ATTACHED_SHULKER);
+        if (cursorStackReference != null) cursorStackReference.set(shulker);
+        if (slot != null) slot.insertStack(shulker);
+
+        // Update the player inventory
+        this.onContentChanged(player);
+    }
 
     // Check if the item is a shulker box (any color)
     private boolean isShulkerBox(Item item) {
@@ -176,6 +226,13 @@ public class TerravacuumItem extends Item {
             return true;
         }
         return false;
+    }
+
+    private void onContentChanged(PlayerEntity user) {
+        ScreenHandler screenHandler = user.currentScreenHandler;
+        if (screenHandler != null) {
+            screenHandler.onContentChanged(user.getInventory());
+        }
     }
 
 }
