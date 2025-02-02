@@ -107,6 +107,7 @@ public class TerravacuumItem extends Item {
             user.getStackInHand(hand).damage(1, ((ServerWorld) world), ((ServerPlayerEntity) user), item -> user.sendEquipmentBreakStatus(item, EquipmentSlot.MAINHAND));
             
             world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_INHALE, SoundCategory.PLAYERS);
+            world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_IDLE_AIR, SoundCategory.PLAYERS);
 
         };
 
