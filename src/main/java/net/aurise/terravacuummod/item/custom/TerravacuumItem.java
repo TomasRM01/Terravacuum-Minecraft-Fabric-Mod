@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
@@ -42,17 +41,6 @@ public class TerravacuumItem extends Item {
     
     public TerravacuumItem(Settings settings) {
         super(settings);
-    }
-
-    // Custom tooltip that explains how to attach and detach shulker boxes
-    @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-        if (stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
-            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_deattach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
-        }
-        else {
-            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_attach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
-        }
     }
 
     @Override
@@ -157,6 +145,17 @@ public class TerravacuumItem extends Item {
         }
 
         world.breakBlock(targetPos, !added, user);
+    }
+
+    // Custom tooltip that explains how to attach and detach shulker boxes
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        if (stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
+            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_deattach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
+        }
+        else {
+            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_attach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
+        }
     }
 
     // Called when clicked the item
