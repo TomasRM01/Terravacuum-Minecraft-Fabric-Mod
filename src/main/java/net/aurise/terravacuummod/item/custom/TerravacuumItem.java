@@ -32,12 +32,16 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
 public class TerravacuumItem extends Item {
 
-    final int shulkerBoxInventorySize = ShulkerBoxBlockEntity.INVENTORY_SIZE;
+    public static final int breakAreaRadius = 5;
+    public static final int breakAreaHeight = 3;
+
+    static final int shulkerBoxInventorySize = ShulkerBoxBlockEntity.INVENTORY_SIZE;
     
     public TerravacuumItem(Settings settings) {
         super(settings);
@@ -68,86 +72,6 @@ public class TerravacuumItem extends Item {
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-
-        if(!world.isClient()){
-
-            // if the item durability is 1, do nothing
-            if (user.getStackInHand(hand).getDamage() == user.getStackInHand(hand).getMaxDamage() - 1) {
-                return ActionResult.FAIL;
-            }
-            
-            // Break blocks in a cone in front of the player
-            int radius = 5;
-            int height = 2;
-            
-            BlockPos playerPos = user.getBlockPos();
-            BlockPos targetPos;
-
-            ItemStack attachedShulker = user.getStackInHand(hand).get(ModDataComponentTypes.ATTACHED_SHULKER);
-
-            for (int y = 0; y <= height; y++) {
-                for (int x = -radius; x <= radius; x++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        targetPos = playerPos.add(x, y, z);
-                        if (user.getRotationVec(1.0F).dotProduct(targetPos.subtract(playerPos).toCenterPos().normalize()) > 0.5) {
-                            // If the block is not breakable, dont break it
-                            Block block = world.getBlockState(targetPos).getBlock();
-                            float blockHardness = block.getHardness();
-                            if (blockHardness >= 0 && blockHardness <= 1.5 && !world.getBlockState(targetPos).isAir()) {
-                                handleBlockDestruction(world, user, targetPos, block, attachedShulker, user.getStackInHand(hand));
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Durability loss
-            user.getStackInHand(hand).damage(1, ((ServerWorld) world), ((ServerPlayerEntity) user), item -> user.sendEquipmentBreakStatus(item, EquipmentSlot.MAINHAND));
-            
-            world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_INHALE, SoundCategory.PLAYERS);
-            world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_IDLE_AIR, SoundCategory.PLAYERS);
-
-        };
-
-        return ActionResult.SUCCESS;
-    }
-
-    // Break the block and add it to the shulker box if it is not full, otherwise drop it
-    private void handleBlockDestruction(World world, PlayerEntity user, BlockPos targetPos, Block block, ItemStack shulker, ItemStack stack) {
-
-        boolean added = false;
-
-        if (shulker != null) {
-
-            DefaultedList<ItemStack> stacks = DefaultedList.ofSize(shulkerBoxInventorySize, ItemStack.EMPTY);
-            shulker.get(DataComponentTypes.CONTAINER).copyTo(stacks);
-            
-            for (int i = 0; i < stacks.size(); i++) {
-                if (stacks.get(i).isEmpty()) {
-                    stacks.set(i, new ItemStack(block));
-                    added = true;
-                    break;
-                }
-                else if (stacks.get(i).isOf(block.asItem())) {
-                    int count = stacks.get(i).getCount();
-                    if (count < 64) {
-                        stacks.get(i).setCount(count + 1);
-                        added = true;
-                        break;
-                    }
-                }
-            }
-
-            shulker.set(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(stacks));
-            stack.set(ModDataComponentTypes.ATTACHED_SHULKER, shulker);
-
-        }
-
-        world.breakBlock(targetPos, !added, user);
-    }
-
     // Custom tooltip that explains how to attach and detach shulker boxes
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
@@ -157,6 +81,30 @@ public class TerravacuumItem extends Item {
         else {
             textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_attach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
         }
+    }
+
+    @Override
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+
+        if(world.isClient()) {
+            return ActionResult.SUCCESS;
+        }
+
+        // The item stops working when it is about to break to prevent shulkerbox loss
+        if (user.getStackInHand(hand).getDamage() == user.getStackInHand(hand).getMaxDamage() - 1) {
+            return ActionResult.FAIL;
+        }
+        
+        calculateBreakAreaAndDestroyBlocks(world, user, hand);
+
+        // Durability loss
+        user.getStackInHand(hand).damage(1, ((ServerWorld) world), ((ServerPlayerEntity) user), item -> user.sendEquipmentBreakStatus(item, EquipmentSlot.MAINHAND));
+        
+        world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_INHALE, SoundCategory.PLAYERS);
+        world.playSound(null, user.getBlockPos(), SoundEvents.ENTITY_BREEZE_IDLE_AIR, SoundCategory.PLAYERS);
+
+        return ActionResult.SUCCESS;
+
     }
 
     // Called when clicked the item
@@ -169,6 +117,84 @@ public class TerravacuumItem extends Item {
     @Override
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
         return handleShulkerInteraction(stack, slot.getStack(), slot, clickType, player, null);
+    }
+
+
+
+
+
+    private void calculateBreakAreaAndDestroyBlocks(World world, PlayerEntity user, Hand hand) {
+
+        // Get player position and look vector
+        BlockPos playerPos = user.getBlockPos();
+        Vec3d lookVec = user.getRotationVec(1.0F);
+
+        // Calculate the center of the break area
+        BlockPos targetCenter = playerPos.add(
+            (int) ((lookVec.x) * (breakAreaRadius + 1)),
+            0,
+            (int) ((lookVec.z) * (breakAreaRadius + 1))
+        );
+
+        // Break blocks in the break area on a cylinder shape if they are within the break radius
+        for (int x = -breakAreaRadius; x <= breakAreaRadius; x++) {
+            for (int z = -breakAreaRadius; z <= breakAreaRadius; z++) {
+                if (Math.sqrt(x * x + z * z) <= breakAreaRadius) { // Keeps the shape of the cylinder
+                    for (int y = 0; y < breakAreaHeight; y++) { // Height of the cylinder
+
+                        // Calculate the position of the target block
+                        BlockPos targetPos = targetCenter.add(x, y, z);
+
+                        // Adjust the player position on the y axis to keep the cylinder shape
+                        BlockPos adjustedPlayerPos = playerPos.add(0, y, 0);
+                        
+                        // Check if the target block is within the break radius
+                        double distance = Math.sqrt(targetPos.getSquaredDistance(adjustedPlayerPos));
+                        if (distance <= breakAreaRadius) {
+                            handleBlockDestruction(world, user, hand, targetPos, world.getBlockState(targetPos).getBlock());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Break the targetBlock and add it to the shulkerbox if it is not full, otherwise drop it
+    private void handleBlockDestruction(World world, PlayerEntity user, Hand hand, BlockPos targetPos, Block targetBlock) {
+
+        ItemStack terravacuumStack = user.getStackInHand(hand);
+        ItemStack attachedShulker = terravacuumStack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+
+        boolean shouldDrop = true;
+
+        if (attachedShulker == null) {
+            world.breakBlock(targetPos, shouldDrop, user);
+            return;
+        }
+        
+        DefaultedList<ItemStack> shulkerContent = DefaultedList.ofSize(shulkerBoxInventorySize, ItemStack.EMPTY);
+        attachedShulker.get(DataComponentTypes.CONTAINER).copyTo(shulkerContent);
+        
+        for (int i = 0; i < shulkerContent.size(); i++) {
+            if (shulkerContent.get(i).isEmpty()) {
+                shulkerContent.set(i, new ItemStack(targetBlock));
+                shouldDrop = false;
+                break;
+            }
+            else if (shulkerContent.get(i).isOf(targetBlock.asItem())) {
+                int count = shulkerContent.get(i).getCount();
+                if (count < 64) {
+                    shulkerContent.get(i).setCount(count + 1);
+                    shouldDrop = false;
+                    break;
+                }
+            }
+        }
+
+        attachedShulker.set(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(shulkerContent));
+        terravacuumStack.set(ModDataComponentTypes.ATTACHED_SHULKER, attachedShulker);
+        
+        world.breakBlock(targetPos, shouldDrop, user);
     }
 
     // Attach and detach shulker boxes to the item like a bundle
