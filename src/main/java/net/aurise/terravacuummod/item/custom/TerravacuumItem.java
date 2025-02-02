@@ -1,6 +1,7 @@
 package net.aurise.terravacuummod.item.custom;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.aurise.terravacuummod.component.ModDataComponentTypes;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
@@ -9,12 +10,14 @@ import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.CustomModelDataComponent;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -23,8 +26,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +42,17 @@ public class TerravacuumItem extends Item {
     
     public TerravacuumItem(Settings settings) {
         super(settings);
+    }
+
+    // Custom tooltip that explains how to attach and detach shulker boxes
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        if (stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null) {
+            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_deattach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
+        }
+        else {
+            textConsumer.accept(Text.translatable("itemTooltip.terravacuum-mod.terravacuum_attach_info").formatted(Formatting.GRAY, Formatting.ITALIC));
+        }
     }
 
     @Override
@@ -179,9 +195,7 @@ public class TerravacuumItem extends Item {
     private void addShulkerToTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
         player.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
 
-        CustomModelDataComponent customModelData = new CustomModelDataComponent(List.of(), List.of(), List.of(shulker.getItem().toString()), List.of()); // Temporal fix until 1.21.5
-        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, customModelData); // Temporal fix until 1.21.5
-        // stack.set(ModDataComponentTypes.SHULKER_COLOR, shulker.getItem().toString()); // This is not working until 1.21.5
+        stack.set(ModDataComponentTypes.SHULKER_COLOR, shulker.getItem().toString());
 
         stack.set(ModDataComponentTypes.ATTACHED_SHULKER, shulker);
         if (cursorStackReference != null) cursorStackReference.set(ItemStack.EMPTY);
@@ -193,8 +207,7 @@ public class TerravacuumItem extends Item {
     private void removeShulkerFromTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
         player.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
 
-        stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Temporal fix until 1.21.5
-        // stack.remove(ModDataComponentTypes.SHULKER_COLOR); // This is not working until 1.21.5
+        stack.remove(ModDataComponentTypes.SHULKER_COLOR);
 
         stack.remove(ModDataComponentTypes.ATTACHED_SHULKER);
         if (cursorStackReference != null) cursorStackReference.set(shulker);

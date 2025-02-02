@@ -5,7 +5,8 @@
         "component": "terravacuum-mod:attached_shulker",
             "on_true": {
                 "type": "minecraft:select",
-                "property": "minecraft:custom_model_data",
+                "property": "minecraft:component",
+                "component": "terravacuum-mod:shulker_color",
                 "cases": [
                     {
                         "when": "minecraft:shulker_box",

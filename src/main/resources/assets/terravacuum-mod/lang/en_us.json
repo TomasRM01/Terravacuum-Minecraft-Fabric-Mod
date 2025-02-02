@@ -1,3 +1,6 @@
 {
-    "item.terravacuum-mod.terravacuum": "Terravacuum"
+    "item.terravacuum-mod.terravacuum": "Terravacuum",
+
+    "itemTooltip.terravacuum-mod.terravacuum_attach_info": "Left click with a Shulker Box to attach it",
+    "itemTooltip.terravacuum-mod.terravacuum_deattach_info": "Right click to deattach the Shulker Box"
 }
