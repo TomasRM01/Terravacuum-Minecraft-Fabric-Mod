@@ -151,7 +151,11 @@ public class TerravacuumItem extends Item {
                         // Check if the target block is within the break radius
                         double distance = Math.sqrt(targetPos.getSquaredDistance(adjustedPlayerPos));
                         if (distance <= breakAreaRadius) {
-                            handleBlockDestruction(world, user, hand, targetPos, world.getBlockState(targetPos).getBlock());
+                            Block targetBlock = world.getBlockState(targetPos).getBlock();
+                            float blockHardness = targetBlock.getHardness();
+                            if (blockHardness >= 0 && blockHardness <= 1.5 && !world.getBlockState(targetPos).isAir()) {
+                                handleBlockDestruction(world, user, hand, targetPos, targetBlock);
+                            }
                         }
                     }
                 }
