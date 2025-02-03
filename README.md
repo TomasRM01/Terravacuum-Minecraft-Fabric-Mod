@@ -14,4 +14,4 @@ Tired of messy block clearing? **Terravacuum** is here to help! This powerful va
 
 Revolutionize the way you shape your world! 🚀✨
 
-![Player Holding a Terravacuum](https://media.forgecdn.net/attachments/description/1192890/description_4a846a6b-e577-4b5f-859d-011c0fdd8c16.png)
+![Player Holding a Terravacuum](https://media.forgecdn.net/attachments/description/1192890/description_4a846a6b-e577-4b5f-859d-011c0fdd8c16.png =220x150)
