@@ -2,7 +2,7 @@
 
 Tired of messy block clearing? **Terravacuum** is here to help! This powerful vacuum **effortlessly sucks up blocks**, making large-scale terraforming a breeze. Collected blocks are **automatically stored** in attached **Shulker Boxes**, keeping your inventory clean and organized.
 
-![Player Holding a Terravacuum](https://media.forgecdn.net/attachments/description/1192890/description_911ce05a-e830-48d2-a5fa-40581f2905ab.png)
+![All Terravacuum variants](https://media.forgecdn.net/attachments/description/1192890/description_911ce05a-e830-48d2-a5fa-40581f2905ab.png)
 
 ## Features
 
