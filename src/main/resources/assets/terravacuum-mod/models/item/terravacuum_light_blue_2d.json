@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "terravacuum-mod:item/terravacuum_light_blue_2d"
+    }
+}
