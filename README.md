@@ -1,4 +1,4 @@
-# Terravacuum Mod – Terraform with Ease! 🌍🌀
+# Terravacuum – Terraform with Ease! 🌍🌀
 
 Tired of messy block clearing? **Terravacuum** is here to help! This powerful vacuum **effortlessly sucks up blocks**, making large-scale terraforming a breeze. Collected blocks are **automatically stored** in attached **Shulker Boxes**, keeping your inventory clean and organized.
 
