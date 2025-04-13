@@ -12,6 +12,12 @@ Tired of messy block clearing? **Terravacuum** is here to help! This powerful va
 ✅ **Repairable with Breeze Rods** to keep it in top shape.  
 ✅ **Found in Ominous Vaults**, waiting to be discovered!
 
+https://youtu.be/munaHU_CO14?si=mN_aXAKtSDabQ0gM&t=20
+
+_Mod showcase at 0:20_
+
 Revolutionize the way you shape your world! 🚀✨
 
 ![Player Holding a Terravacuum](https://media.forgecdn.net/attachments/description/1192890/description_4a846a6b-e577-4b5f-859d-011c0fdd8c16.png)
+
+(Thanks SneakiLink for the video!)
