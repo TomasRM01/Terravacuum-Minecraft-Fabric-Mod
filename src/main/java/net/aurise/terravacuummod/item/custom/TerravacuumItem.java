@@ -1,6 +1,7 @@
 package net.aurise.terravacuummod.item.custom;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import net.aurise.terravacuummod.component.ModDataComponentTypes;
@@ -56,11 +57,7 @@ public class TerravacuumItem extends Item {
     public boolean canBeEnchantedWith(ItemStack stack, RegistryEntry<Enchantment> enchantment, EnchantingContext context) {
 
         // Only unbreaking enchantment is allowed
-        if (enchantment.matchesKey(net.minecraft.enchantment.Enchantments.UNBREAKING)) {
-            return true;
-        }
-
-        return false;
+        return enchantment.matchesKey(net.minecraft.enchantment.Enchantments.UNBREAKING);
     }
 
     @Override
@@ -145,7 +142,7 @@ public class TerravacuumItem extends Item {
                         // Calculate the position of the target block
                         BlockPos targetPos = targetCenter.add(x, y, z);
 
-                        // Adjust the player position on the y axis to keep the cylinder shape
+                        // Adjust the player position on the y-axis to keep the cylinder shape
                         BlockPos adjustedPlayerPos = playerPos.add(0, y, 0);
                         
                         // Check if the target block is within the break radius
@@ -172,12 +169,12 @@ public class TerravacuumItem extends Item {
         boolean shouldDrop = true;
 
         if (attachedShulker == null) {
-            world.breakBlock(targetPos, shouldDrop, user);
+            world.breakBlock(targetPos, true, user);
             return;
         }
         
         DefaultedList<ItemStack> shulkerContent = DefaultedList.ofSize(shulkerBoxInventorySize, ItemStack.EMPTY);
-        attachedShulker.get(DataComponentTypes.CONTAINER).copyTo(shulkerContent);
+        Objects.requireNonNull(attachedShulker.get(DataComponentTypes.CONTAINER)).copyTo(shulkerContent);
         
         for (int i = 0; i < shulkerContent.size(); i++) {
             if (shulkerContent.get(i).isEmpty()) {
@@ -249,10 +246,7 @@ public class TerravacuumItem extends Item {
     // Check if the item is a shulker box (any color)
     private boolean isShulkerBox(Item item) {
         List<Item> shulkerBoxes = List.of(Items.SHULKER_BOX, Items.WHITE_SHULKER_BOX, Items.ORANGE_SHULKER_BOX, Items.MAGENTA_SHULKER_BOX, Items.LIGHT_BLUE_SHULKER_BOX, Items.YELLOW_SHULKER_BOX, Items.LIME_SHULKER_BOX, Items.PINK_SHULKER_BOX, Items.GRAY_SHULKER_BOX, Items.LIGHT_GRAY_SHULKER_BOX, Items.CYAN_SHULKER_BOX, Items.PURPLE_SHULKER_BOX, Items.BLUE_SHULKER_BOX, Items.BROWN_SHULKER_BOX, Items.GREEN_SHULKER_BOX, Items.RED_SHULKER_BOX, Items.BLACK_SHULKER_BOX);
-        if (shulkerBoxes.contains(item)) {
-            return true;
-        }
-        return false;
+        return shulkerBoxes.contains(item);
     }
 
     // Update the player inventory
