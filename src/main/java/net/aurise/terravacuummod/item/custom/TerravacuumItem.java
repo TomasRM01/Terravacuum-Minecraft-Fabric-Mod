@@ -220,7 +220,7 @@ public class TerravacuumItem extends Item {
     }
 
     private void addShulkerToTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
-        player.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
+        player.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 0.8F, 0.8F + player.getRandom().nextFloat() * 0.4F);
 
         stack.set(ModDataComponentTypes.SHULKER_COLOR, shulker.getItem().toString());
 
@@ -232,7 +232,7 @@ public class TerravacuumItem extends Item {
     }
 
     private void removeShulkerFromTerravacuum(PlayerEntity player, ItemStack stack, Slot slot, StackReference cursorStackReference, ItemStack shulker) {
-        player.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.getWorld().getRandom().nextFloat() * 0.4F);
+        player.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.getRandom().nextFloat() * 0.4F);
 
         stack.remove(ModDataComponentTypes.SHULKER_COLOR);
 
