@@ -2,7 +2,7 @@ package net.aurise.terravacuummod.item;
 
 import net.aurise.terravacuummod.TerravacuumMod;
 import net.aurise.terravacuummod.item.custom.TerravacuumItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -26,7 +26,7 @@ public class ModItems {
     public static void registerModItems() {
         TerravacuumMod.LOGGER.info("Registering Mod Items for " + TerravacuumMod.MOD_ID);
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
             entries.accept(TERRAVACUUM);
         });
     }

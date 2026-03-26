@@ -28,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -61,12 +62,12 @@ public class TerravacuumItem extends Item {
     }
 
     @Override
-    public ItemStack getRecipeRemainder(ItemStack stack) {
-        if (stack.get(ModDataComponentTypes.ATTACHED_SHULKER) != null)
-        {
-            return stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+    public ItemStackTemplate getCraftingRemainder(ItemStack stack) {
+        ItemStack remainder = stack.get(ModDataComponentTypes.ATTACHED_SHULKER);
+        if (remainder == null) {
+            return null;
         }
-        return ItemStack.EMPTY;
+        return ItemStackTemplate.fromNonEmptyStack(remainder);
     }
 
     // Custom tooltip that explains how to attach and detach shulker boxes
@@ -115,10 +116,6 @@ public class TerravacuumItem extends Item {
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction clickType, Player player) {
         return handleShulkerInteraction(stack, slot.getItem(), slot, clickType, player, null);
     }
-
-
-
-
 
     private void calculateBreakAreaAndDestroyBlocks(Level world, Player user, InteractionHand hand) {
 
